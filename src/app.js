@@ -19,14 +19,9 @@ app.get("/", (req, res) => {
     res.status(200).send("My dear book");
 });
 
-app.get("/books", async (req, res) => {
-    const listBooks = await book.find({});
-    res.status(200).json(listBooks);
-});
-
 app.post("/books",  (req, res) => {
     books.push(req.body);
-    res.status(201).send("Registered book");
+        res.status(201).send("Registered book");
 });
 
 app.get("/books/:id", (req, res) => {
