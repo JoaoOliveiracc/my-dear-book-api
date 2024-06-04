@@ -1,5 +1,6 @@
 import express from "express";
 import connectDB from "./config/dbconnect.js";
+import book from "./models/Book.js";
 
 const connection = await connectDB();
 
@@ -14,29 +15,13 @@ connection.once("open", () => {
 const app = express();
 app.use(express.json());
 
-const books = [
-    {
-        id: 1,
-        title: "O Senhor dos Anéis" 
-    },
-    {
-        id: 2,
-        title: "O Corvo" 
-    }
-];
-
-function searchBook(id) {
-    return books.findIndex(book => {
-        return book.id === Number(id)
-    });
-}
-
 app.get("/", (req, res) => {
     res.status(200).send("My dear book");
 });
 
-app.get("/books", (req, res) => {
-    res.status(200).json(books);
+app.get("/books", async (req, res) => {
+    const listBooks = await book.find({});
+    res.status(200).json(listBooks);
 });
 
 app.post("/books",  (req, res) => {
