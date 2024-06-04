@@ -51,6 +51,20 @@ class BookController {
             });
         }
     }
+
+    static async deleteBook(req, res) {
+        try {
+            const id = req.params.is;
+            await book.findByIdAndDelete(id);
+            res.status(200).json({
+                message: "Deleted book"
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: `${error.message}`
+            });
+        }
+    }
 };
 
 export default BookController;
