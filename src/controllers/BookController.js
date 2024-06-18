@@ -2,7 +2,7 @@ import { author } from "../models/Author.js";
 import book from "../models/Book.js";
 
 class BookController {
-  static async getBooks(req, res) {
+  static getBooks = async (req, res) => {
     try {
       const listBooks = await book.find({});
       res.status(200).json(listBooks);
@@ -13,7 +13,7 @@ class BookController {
     }
   }
 
-  static async getBook(req, res) {
+  static getBook = async (req, res) => {
     try {
       const id = req.params.id;
       const bookData = await book.findById(id);
@@ -25,7 +25,7 @@ class BookController {
     }
   }
 
-  static async registerBook(req, res) {
+  static registerBook = async (req, res) => {
     const newBook = req.body;
     try {
       const authorFound = await author.findById(newBook.author);
@@ -42,7 +42,7 @@ class BookController {
     }
   }
 
-  static async updateBook(req, res) {
+  static updateBook = async (req, res) => {
     try {
       const id = req.params.id;
       await book.findByIdAndUpdate(id, req.body);
@@ -56,7 +56,7 @@ class BookController {
     }
   }
 
-  static async deleteBook(req, res) {
+  static deleteBook = async (req, res) => {
     try {
       const id = req.params.is;
       await book.findByIdAndDelete(id);
@@ -70,7 +70,7 @@ class BookController {
     }
   }
 
-  static async booksByPublisher(req, res) {
+  static booksByPublisher = async (req, res) => {
     const publisher = req.query.publisher;
 
     try {
