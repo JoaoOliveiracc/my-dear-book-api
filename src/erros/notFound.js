@@ -1,4 +1,4 @@
-import baseErro from "./baseErro";
+import baseErro from "./baseErro.js";
 
 class notFound extends baseErro {
   constructor(msg = 'Página não encontrada') {

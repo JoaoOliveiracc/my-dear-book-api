@@ -1,4 +1,4 @@
-import notFound from "../erros/notFound";
+import notFound from "../erros/notFound.js";
 
 function notFoundControl(req, res, next) {
   const err404 = new notFound();
