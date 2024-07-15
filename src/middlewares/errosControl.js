@@ -1,20 +1,19 @@
 import mongoose from "mongoose";
+import baseErro from "../erros/baseErro.js";
+import Requests from "../erros/requests.js";
+import ValidationError from "../erros/validationErr.js";
 
 // eslint-disable-next-line no-unused-vars
 function errosControl (erro, req, res, next) {
   if (erro instanceof mongoose.Error.CastError) {
-    res.status(400).send({message: 'Erro no parâmetro enviado.'});
+    new Requests().sendResponse(res);
   }
 
   if (erro instanceof mongoose.Error.ValidationError) {
-    const msgErro = Object.values(erro.errors)
-      .map(erro => erro.message)
-      .join('; ');
-
-    res.status(400).send({message: msgErro})
+    new ValidationError(erro).sendResponse(res);
   }
 
-  res.status(500).send({message: 'Erro interno no servidor.'});
+  new baseErro().sendResponse(res);
 }
 
 export default errosControl;
