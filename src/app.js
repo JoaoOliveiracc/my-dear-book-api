@@ -2,6 +2,7 @@ import express from "express";
 import connectDB from "./config/dbconnect.js";
 import routes from "./routes/index.js";
 import errosControl from "./middlewares/errosControl.js";
+import notFoundControl from "./middlewares/notFoundControl.js";
 
 const connection = await connectDB();
 
@@ -15,6 +16,8 @@ connection.once("open", () => {
 
 const app = express();
 routes(app);
+
+app.use(notFoundControl);
 
 app.use(errosControl);
 
