@@ -1,7 +1,7 @@
 import express from "express";
 import connectDB from "./config/dbconnect.js";
 import routes from "./routes/index.js";
-import mongoose from "mongoose";
+import errosControl from "./middlewares/errosControl.js";
 
 const connection = await connectDB();
 
@@ -16,12 +16,6 @@ connection.once("open", () => {
 const app = express();
 routes(app);
 
-// eslint-disable-next-line no-unused-vars
-app.use((erro, req, res, next) => {
-  if (erro instanceof mongoose.Error.CastError) {
-    res.status(400).send({message: "Erro no parâmetro enviado."})
-  }
-  res.status(500).send({message: 'Erro interno no servidor.'})
-});
+app.use(errosControl);
 
 export default app;

@@ -20,7 +20,7 @@ class AuthorController {
       if (authorData !== null) {
         res.status(200).json(authorData);
       } else {
-        res.status(404).send({message: "Autor não encontrado."})
+        res.status(404).send({message: "Autor(a) não encontrado."})
       }
     } catch (error) {
       next(error);
