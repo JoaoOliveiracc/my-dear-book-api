@@ -2,30 +2,26 @@ import { author } from "../models/Author.js";
 import book from "../models/Book.js";
 
 class BookController {
-  static getBooks = async (req, res) => {
+  static getBooks = async (req, res, next) => {
     try {
       const listBooks = await book.find({});
       res.status(200).json(listBooks);
     } catch (error) {
-      res.status(500).json({
-        message: `${error.message}`
-      });
+      next(error);
     }
   }
 
-  static getBook = async (req, res) => {
+  static getBook = async (req, res, next) => {
     try {
       const id = req.params.id;
       const bookData = await book.findById(id);
       res.status(200).json(bookData);
     } catch (error) {
-      res.status(500).json({
-        message: `${error.message}`
-      });
+      next(error);
     }
   }
 
-  static registerBook = async (req, res) => {
+  static registerBook = async (req, res, next) => {
     const newBook = req.body;
     try {
       const authorFound = await author.findById(newBook.author);
@@ -36,13 +32,11 @@ class BookController {
         book: createdBook
       });
     } catch (error) {
-      res.status(500).json({
-        message: `${error.message}`
-      });
+      next(error);
     }
   }
 
-  static updateBook = async (req, res) => {
+  static updateBook = async (req, res, next) => {
     try {
       const id = req.params.id;
       await book.findByIdAndUpdate(id, req.body);
@@ -50,13 +44,11 @@ class BookController {
         message: "Updated book"
       });
     } catch (error) {
-      res.status(500).json({
-        message: `${error.message}`
-      });
+      next(error);
     }
   }
 
-  static deleteBook = async (req, res) => {
+  static deleteBook = async (req, res, next) => {
     try {
       const id = req.params.is;
       await book.findByIdAndDelete(id);
@@ -64,22 +56,18 @@ class BookController {
         message: "Deleted book"
       })
     } catch (error) {
-      res.status(500).json({
-        message: `${error.message}`
-      });
+      next(error);
     }
   }
 
-  static booksByPublisher = async (req, res) => {
+  static booksByPublisher = async (req, res, next) => {
     const publisher = req.query.publisher;
 
     try {
       const booksByPublisher = await book.find({ publisher: publisher });
       res.status(200).json(booksByPublisher);
     } catch (error) {
-      res.status(500).json({
-        message: `${error.message}`
-      });
+      next(error);
     }
   }
 };

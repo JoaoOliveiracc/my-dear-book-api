@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { author } from "../models/Author.js";
 
 class AuthorController {
@@ -13,7 +12,7 @@ class AuthorController {
     }
   }
 
-  static getAuthor = async (req, res) => {
+  static getAuthor = async (req, res, next) => {
     try {
       const id = req.params.id;
       const authorData = await author.findById(id);
@@ -24,14 +23,11 @@ class AuthorController {
         res.status(404).send({message: "Autor não encontrado."})
       }
     } catch (error) {
-      if (error instanceof mongoose.Error.CastError) {
-        res.status(400).send({message: "Erro no parâmetro enviado."})
-      }
-      res.status(500).send({message: 'Erro interno no servidor.', error})
+      next(error);
     }
   }
 
-  static registerAuthor = async (req, res) => {
+  static registerAuthor = async (req, res, next) => {
     try {
       const newAuthor = await author.create(req.body);
       res.status(201).json({
@@ -39,13 +35,11 @@ class AuthorController {
         book: newAuthor
       });
     } catch (error) {
-      res.status(500).json({
-        message: `${error.message}`
-      });
+      next(error);
     }
   }
 
-  static updateAuthor = async (req, res) => {
+  static updateAuthor = async (req, res, next) => {
     try {
       const id = req.params.id;
       await author.findByIdAndUpdate(id, req.body);
@@ -53,13 +47,11 @@ class AuthorController {
         message: "Updated author"
       });
     } catch (error) {
-      res.status(500).json({
-        message: `${error.message}`
-      });
+      next(error);
     }
   }
 
-  static deleteAuthor = async (req, res) => {
+  static deleteAuthor = async (req, res, next) => {
     try {
       const id = req.params.is;
       await author.findByIdAndDelete(id);
@@ -67,9 +59,7 @@ class AuthorController {
         message: "Deleted author"
       })
     } catch (error) {
-      res.status(500).json({
-        message: `${error.message}`
-      });
+      next(error);
     }
   }
 };
