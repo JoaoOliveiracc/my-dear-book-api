@@ -1,6 +1,5 @@
 import notFound from "../erros/notFound.js";
-import { author } from "../models/index.js";
-import { book } from "../models/index.js";
+import { author, book } from "../models/index.js";
 
 class BookController {
   static getBooks = async (req, res, next) => {
@@ -62,9 +61,9 @@ class BookController {
   static deleteBook = async (req, res, next) => {
     try {
       const id = req.params.is;
-      const book = await book.findByIdAndDelete(id);
+      const bookData = await book.findByIdAndDelete(id);
 
-      if (book !== null) {
+      if (bookData !== null) {
         res.status(200).json({
           message: "Deleted book"
         });
@@ -78,13 +77,9 @@ class BookController {
 
   static booksByFilter = async (req, res, next) => {
     try {
-      const { publisher, title } = req.query;
-      const search = {};
+      const search = await searchProccess(req.query);
 
-      if (publisher) search.publisher = publisher;
-      if (title) search.title = title;
-
-      const booksByPublisher = await book.find(search);
+      const booksByPublisher = await book.find(search).populate('author');
 
       res.status(200).json(booksByPublisher);
     } catch (error) {
@@ -92,5 +87,29 @@ class BookController {
     }
   }
 };
+
+async function searchProccess(params) {
+  const { publisher, title, minPag, maxPag, authorName } = params;
+  const regex = new RegExp(title, 'i');
+  const search = {};
+
+  if (publisher) search.publisher = publisher;
+
+  if (title) search.title = regex;
+
+  if (minPag || maxPag) search.pagesNumber = {};
+
+  if (minPag) search.pagesNumber.$gte = minPag;
+  
+  if (maxPag) search.pagesNumber.$lte = maxPag;
+
+  if (authorName) {
+    const authorData = await author.findOne({ name: authorName });
+    const idAuthor = authorData._id;
+    search.author = idAuthor;
+  }
+
+  return search;
+}
 
 export default BookController;
