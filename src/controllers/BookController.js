@@ -77,14 +77,15 @@ class BookController {
   }
 
   static booksByFilter = async (req, res, next) => {
-    const { publisher, title } = req.query;
-
     try {
-      const booksByPublisher = await book.find({
-        publisher: publisher,
-        title: title
-      });
-      
+      const { publisher, title } = req.query;
+      const search = {};
+
+      if (publisher) search.publisher = publisher;
+      if (title) search.title = title;
+
+      const booksByPublisher = await book.find(search);
+
       res.status(200).json(booksByPublisher);
     } catch (error) {
       next(error);
