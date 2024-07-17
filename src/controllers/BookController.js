@@ -5,13 +5,16 @@ import { author, book } from "../models/index.js";
 class BookController {
   static getBooks = async (req, res, next) => {
     try {
-      let { limit = 5, page = 1 } = req.query;
+      let { limit = 5, page = 1, ordenation = '_id:-1' } = req.query;
+      let [flagOrder, order] = ordenation.split(':');
 
       limit = parseInt(limit);
       page = parseInt(page);
+      order = parseInt(order);
 
       if (limit > 0 && page > 0) {
         const listBooks = await book.find()
+          .sort({ [flagOrder]: order })
           .skip((page - 1) * limit)
           .limit(limit)
           .populate('author')
