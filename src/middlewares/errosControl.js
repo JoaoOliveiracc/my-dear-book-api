@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import baseErro from "../erros/baseErro.js";
 import Requests from "../erros/requests.js";
 import ValidationError from "../erros/validationErr.js";
-import notFound from "../erros/notFound.js";
 
 // eslint-disable-next-line no-unused-vars
 function errosControl (erro, req, res, next) {
@@ -14,7 +13,7 @@ function errosControl (erro, req, res, next) {
     new ValidationError(erro).sendResponse(res);
   }
 
-  if (erro instanceof notFound) {
+  if (erro instanceof baseErro) {
     erro.sendResponse(res);
   }
 

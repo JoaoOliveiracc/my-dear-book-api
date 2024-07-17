@@ -1,11 +1,26 @@
 import notFound from "../erros/notFound.js";
+import Requests from "../erros/requests.js";
 import { author, book } from "../models/index.js";
 
 class BookController {
   static getBooks = async (req, res, next) => {
     try {
-      const listBooks = await book.find({});
-      res.status(200).json(listBooks);
+      let { limit = 5, page = 1 } = req.query;
+
+      limit = parseInt(limit);
+      page = parseInt(page);
+
+      if (limit > 0 && page > 0) {
+        const listBooks = await book.find()
+          .skip((page - 1) * limit)
+          .limit(limit)
+          .populate('author')
+          .exec();
+          
+        res.status(200).json(listBooks);
+      } else {
+        next(new Requests());
+      }
     } catch (error) {
       next(error);
     }
@@ -79,9 +94,13 @@ class BookController {
     try {
       const search = await searchProccess(req.query);
 
-      const booksByPublisher = await book.find(search).populate('author');
-
-      res.status(200).json(booksByPublisher);
+      if (search !== null) {
+        const booksByPublisher = await book.find(search).populate('author');
+  
+        res.status(200).json(booksByPublisher);
+      } else {
+        res.status(200).send([]);
+      }
     } catch (error) {
       next(error);
     }
@@ -91,7 +110,7 @@ class BookController {
 async function searchProccess(params) {
   const { publisher, title, minPag, maxPag, authorName } = params;
   const regex = new RegExp(title, 'i');
-  const search = {};
+  let search = {};
 
   if (publisher) search.publisher = publisher;
 
@@ -105,8 +124,12 @@ async function searchProccess(params) {
 
   if (authorName) {
     const authorData = await author.findOne({ name: authorName });
-    const idAuthor = authorData._id;
-    search.author = idAuthor;
+
+    if (authorData !== null) {
+      search.author = authorData._id;
+    } else {
+      search = null;
+    }
   }
 
   return search;
