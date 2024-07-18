@@ -2,10 +2,11 @@ import notFound from "../erros/notFound.js";
 import { author } from "../models/index.js";
 
 class AuthorController {
-  static getAuthors = async (req, res) => {
+  static getAuthors = async (req, res, next) => {
     try {
-      const listAuthors = await author.find({});
-      res.status(200).json(listAuthors);
+      const listAuthors = author.find({});
+      req.result = listAuthors;
+      next();
     } catch (error) {
       res.status(500).json({
         message: `${error.message}`

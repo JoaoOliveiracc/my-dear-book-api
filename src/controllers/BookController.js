@@ -1,29 +1,12 @@
 import notFound from "../erros/notFound.js";
-import Requests from "../erros/requests.js";
 import { author, book } from "../models/index.js";
 
 class BookController {
   static getBooks = async (req, res, next) => {
     try {
-      let { limit = 5, page = 1, ordenation = '_id:-1' } = req.query;
-      let [flagOrder, order] = ordenation.split(':');
-
-      limit = parseInt(limit);
-      page = parseInt(page);
-      order = parseInt(order);
-
-      if (limit > 0 && page > 0) {
-        const listBooks = await book.find()
-          .sort({ [flagOrder]: order })
-          .skip((page - 1) * limit)
-          .limit(limit)
-          .populate('author')
-          .exec();
-          
-        res.status(200).json(listBooks);
-      } else {
-        next(new Requests());
-      }
+      const searchBook = book.find();
+      req.result = searchBook;
+      next();
     } catch (error) {
       next(error);
     }
@@ -98,9 +81,11 @@ class BookController {
       const search = await searchProccess(req.query);
 
       if (search !== null) {
-        const booksByPublisher = await book.find(search).populate('author');
+        const resultBooks = book.find(search).populate('author');
+
+        req.result = resultBooks; 
   
-        res.status(200).json(booksByPublisher);
+        next();
       } else {
         res.status(200).send([]);
       }
